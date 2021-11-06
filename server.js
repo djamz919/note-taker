@@ -1,11 +1,12 @@
 // Dependencies
 // =============================================================
+const { rejects } = require('assert');
 const express = require('express');
 const fs = require('fs');
 // const apiRoutes = require('./routes/apiRoutes');
 // const htmlRoutes = require('./routes/htmlRoutes');
 const path = require('path');
-const {notesArray} = require('./db/db.json');
+const { notesArray } = require('./db/db.json');
 
 console.log(notesArray);
 
@@ -15,7 +16,6 @@ const PORT = process.env.PORT || 3001;
 function filterAllButId(id, notesArray) {
     console.log(id);
     const result = notesArray.filter(note => note.id !== id);
-    updateNotesArray(result);
     return result;
 }
 
@@ -52,7 +52,7 @@ app.get('/api/notes', (req, res) => {
 });
 
 app.post('/api/notes', (req, res) => {
-    // set id based on what the next index of the array will be
+    // set id based on what the next index of the array will be - to be changed if I want to implement delete
     req.body.id = notesArray.length.toString();
 
     const note = createNewNote(req.body, notesArray);
@@ -60,10 +60,8 @@ app.post('/api/notes', (req, res) => {
 });
 
 app.delete('/api/notes/:id', (req,res) => {
-    // res.send('Am I trying to delete?');
-    const newArray = filterAllButId(req.params.id, notesArray);
-    // console.log(newArray);
-    res.json(newArray);
+    const savedArray = updateNotesArray(filterAllButId(req.params.id, notesArray));
+    res.json(savedArray);
 });
 
 // Listener
