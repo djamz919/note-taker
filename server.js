@@ -5,14 +5,15 @@ const fs = require('fs');
 // const apiRoutes = require('./routes/apiRoutes');
 // const htmlRoutes = require('./routes/htmlRoutes');
 const path = require('path');
-const dbnotes = require('./db/db.json');
+const {notesArray} = require('./db/db.json');
 
-console.log(dbnotes);
+console.log(notesArray);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 function filterAllButId(id, notesArray) {
+    console.log(id);
     const result = notesArray.filter(note => note.id !== id);
     updateNotesArray(result);
     return result;
@@ -47,19 +48,21 @@ app.get('/notes', (req, res) => {
 });
 
 app.get('/api/notes', (req, res) => {
-    res.json(dbnotes);
+    res.json(notesArray);
 });
 
 app.post('/api/notes', (req, res) => {
     // set id based on what the next index of the array will be
-    req.body.id = dbnotes.length.toString();
+    req.body.id = notesArray.length.toString();
 
-    const note = createNewNote(req.body, dbnotes);
+    const note = createNewNote(req.body, notesArray);
     res.json(note);
 });
 
 app.delete('/api/notes/:id', (req,res) => {
-    const newArray = filterAllButId(req.body.id, dbnotes);
+    // res.send('Am I trying to delete?');
+    const newArray = filterAllButId(req.params.id, notesArray);
+    // console.log(newArray);
     res.json(newArray);
 });
 
